@@ -69,7 +69,12 @@ export default function AllRegistrations() {
     return (
         <div>
             <h2>REGISTRATION TABLE</h2>
-
+            <div style={{ margin: '20px 0' }}>
+                <button onClick={downloadExcel}>Download Excel</button>
+                <button onClick={() => router.push('/dash')} style={{ marginLeft: '10px' }}>
+                    View My Registrations
+                </button>
+            </div>
             {registrations.length === 0 ? (
                 <p>No registrations found.</p>
             ) : (

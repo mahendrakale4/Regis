@@ -7,7 +7,6 @@ import { PaymentConfirmation } from './PaymentConfirmation';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
-
 export default function BulkRegistration() {
     const [entries, setEntries] = useState([]);
     const [pocDetails, setPocDetails] = useState({
@@ -45,7 +44,6 @@ export default function BulkRegistration() {
             setUserEmail(userEmail);
         }
     }, []);
-
 
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -142,75 +140,146 @@ export default function BulkRegistration() {
     }
 
     return (
-        <div>
-            <h2>BULK REGISTRATION PORTAL</h2>
-            <div>
-                <button onClick={() => router.push('/dash')}>
+        <div style={styles.container}>
+            <h2 style={styles.header}>Registration Portal</h2>
+            <div style={styles.buttonContainer}>
+                <button style={styles.button} onClick={() => router.push('/dash')}>
                     View My Registrations
                 </button>
             </div>
-            <p>Welcome! You can add multiple registration entries in one transaction.</p>
+
+            <p style={styles.infoText}>Hare Krsna ! You can add multiple registration entries in one transaction.</p>
 
             {submitStatus && (
-                <div className={`status-message ${submitStatus.type}`}>
+                <div style={styles.statusMessage}>
                     {submitStatus.message}
                 </div>
             )}
 
             {!pocEntered ? (
-                <div>
-                    <label>Point of Contact (POC) Name:</label>
-                    <input type="text" name="pocName" value={pocDetails.pocName} onChange={handlePocChange} /><br />
+                <div style={styles.pocForm}>
+                    <label>POC Name:</label>
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="pocName"
+                        value={pocDetails.pocName}
+                        onChange={handlePocChange}
+                    />
+                    <br />
+                    <label>POC Contact no:</label>
+                    <input
+                        style={styles.input}
+                        type="number"
+                        name="pocContact"
+                        value={pocDetails.pocContact}
+                        onChange={handlePocChange}
+                        maxLength={10}  // Limit input to 10 characters
+                        pattern="\d{10}"  // Ensure exactly 10 digits are entered
+                        inputMode="numeric"  // Mobile numeric keypad
+                        onInput={(e) => {
+                            // Restrict to only numbers, and limit to 10 characters
+                            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                        }}
+                        placeholder="Enter 10-digit number"
 
-                    <label>POC Contact:</label>
-                    <input type="text" name="pocContact" value={pocDetails.pocContact} onChange={handlePocChange} /><br />
-
-                    <button onClick={savePocDetails}>Save POC Details</button>
+                    />
+                    <br />
+                    <button style={styles.button} onClick={savePocDetails}>
+                        Save POC Details
+                    </button>
                 </div>
             ) : (
-                <div>
+                <div style={styles.pocDetails}>
                     <p><strong>POC Name:</strong> {pocDetails.pocName}</p>
                     <p><strong>POC Contact:</strong> {pocDetails.pocContact}</p>
                 </div>
             )}
 
             {pocEntered && (
-                <div>
-                    <label>VOICE Name:</label>
-                    <input type="text" name="voiceName" value={formData.voiceName} onChange={handleChange} /><br />
-
+                <div style={styles.registrationForm}>
+                    <label>Voice Name:</label>
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="voiceName"
+                        value={formData.voiceName}
+                        onChange={handleChange}
+                    />
+                    <br />
                     <label>Participant Name:</label>
-                    <input type="text" name="participantName" value={formData.participantName} onChange={handleChange} /><br />
-
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="participantName"
+                        value={formData.participantName}
+                        onChange={handleChange}
+                    />
+                    <br />
                     <label>Gender:</label>
-                    <select name="gender" value={formData.gender} onChange={handleChange}>
+                    <select
+                        style={styles.select}
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                    >
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
-                    </select><br />
-
+                    </select>
+                    <br />
                     <label>Whatsapp:</label>
-                    <input type="text" name="whatsapp" value={formData.whatsapp} onChange={handleChange} /><br />
-
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="whatsapp"
+                        value={formData.whatsapp}
+                        onChange={handleChange}
+                        maxLength={10}  // Limit input to 10 characters
+                        pattern="\d{10}"  // Regex pattern to ensure only numbers are entered
+                        inputMode="numeric"  // Triggers numeric keypad on mobile devices
+                        onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
+                    />
+                    <br />
                     <label>Parent Temple:</label>
-                    <input type="text" name="parentTemple" value={formData.parentTemple} onChange={handleChange} /><br />
-
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="parentTemple"
+                        value={formData.parentTemple}
+                        onChange={handleChange}
+                    />
+                    <br />
                     <label>Counselor Name:</label>
-                    <input type="text" name="counselorName" value={formData.counselorName} onChange={handleChange} /><br />
-
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="counselorName"
+                        value={formData.counselorName}
+                        onChange={handleChange}
+                    />
+                    <br />
                     <label>Camp Name:</label>
-                    <select name="campName" value={formData.campName} onChange={handleChange}>
+                    <select
+                        style={styles.select}
+                        name="campName"
+                        value={formData.campName}
+                        onChange={handleChange}
+                    >
                         <option value="">Select Camp</option>
-
-
                         <option value="GS Camp- First Time">GS (18 - 20 april)</option>
                         <option value="GS Camp- Attended Before">NS (18 - 20 april)</option>
                         <option value="Volunteers">Brahmachari</option>
                         <option value="Brahmachari">Brahmachari</option>
-                    </select><br />
-
+                    </select>
+                    <br />
                     <label>First Meal Date:</label>
-                    <select name="firstMealDate" value={formData.firstMealDate} onChange={handleChange}>
+                    <select
+                        style={styles.select}
+                        name="firstMealDate"
+                        value={formData.firstMealDate}
+                        onChange={handleChange}
+                    >
                         <option value="">Select Date</option>
                         <option value="14">14</option>
                         <option value="15">15</option>
@@ -222,17 +291,27 @@ export default function BulkRegistration() {
                         <option value="21">21</option>
                         <option value="22">22</option>
                     </select>
-
-                    <select name="firstMealType" value={formData.firstMealType} onChange={handleChange}>
+                    <br />
+                    <select
+                        style={styles.select}
+                        name="firstMealType"
+                        value={formData.firstMealType}
+                        onChange={handleChange}
+                    >
                         <option value="">Choose Meal Type</option>
                         <option value="Breakfast">Breakfast</option>
                         <option value="Lunch">Lunch</option>
                         <option value="Dinner">Dinner</option>
-                    </select><br />
-
+                    </select>
+                    <br />
                     <label>Last Meal Date:</label>
-                    <select name="lastMealDate" value={formData.lastMealDate} onChange={handleChange}>
-                        <option value="">Select last Meal Date</option>
+                    <select
+                        style={styles.select}
+                        name="lastMealDate"
+                        value={formData.lastMealDate}
+                        onChange={handleChange}
+                    >
+                        <option value="">Select Last Meal Date</option>
                         <option value="15">15</option>
                         <option value="16">16</option>
                         <option value="17">17</option>
@@ -243,77 +322,103 @@ export default function BulkRegistration() {
                         <option value="22">22</option>
                         <option value="23">23</option>
                     </select>
-
-                    <select name="lastMealType" value={formData.lastMealType} onChange={handleChange}>
+                    <br />
+                    <select
+                        style={styles.select}
+                        name="lastMealType"
+                        value={formData.lastMealType}
+                        onChange={handleChange}
+                    >
                         <option value="">Choose Meal Type</option>
                         <option value="Breakfast">Breakfast</option>
                         <option value="Lunch">Lunch</option>
                         <option value="Dinner">Dinner</option>
-                    </select><br />
-
+                    </select>
+                    <br />
                     <label>Dinner Type:</label>
-                    <select name="dinnerType" value={formData.dinnerType} onChange={handleChange}>
+                    <select
+                        style={styles.select}
+                        name="dinnerType"
+                        value={formData.dinnerType}
+                        onChange={handleChange}
+                    >
                         <option value="Dinner Meal">Dinner Meal</option>
                         <option value="Only Milk">Only Milk</option>
-                    </select><br />
-
+                    </select>
+                    <br />
                     <label>Accommodation:</label>
-                    <select name="accommodation" value={formData.accommodation} onChange={handleChange}>
+                    <select
+                        style={styles.select}
+                        name="accommodation"
+                        value={formData.accommodation}
+                        onChange={handleChange}
+                    >
                         <option value="">Select Accommodation</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
-                        {/* <option value="CV Floor">CV Floor</option> */}
-                    </select><br />
-
-                    <button onClick={addEntry}>{editIndex !== null ? "Update Entry" : "Add Entry"}</button>
+                    </select>
+                    <br />
+                    <button style={styles.button} onClick={addEntry}>
+                        {editIndex !== null ? "Update Entry" : "Add Entry"}
+                    </button>
                 </div>
             )}
 
             {entries.length > 0 && (
-                <div>
+                <div style={styles.entriesList}>
                     <h3>Added Entries</h3>
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Full Name</th>
-                                <th>Gender</th>
-                                <th>Counselor Name</th>
-                                <th>First Meal</th>
-                                <th>Last Meal</th>
-                                <th>Camp Name</th>
-                                <th>Accommodation</th>
-                                <th>Cost</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {entries.map((entry, index) => (
-                                <tr key={index}>
-                                    <td>{entry.participantName}</td>
-                                    <td>{entry.gender}</td>
-                                    <td>{entry.counselorName}</td>
-                                    <td>{entry.firstMealDate} - {entry.firstMealType}</td>
-                                    <td>{entry.lastMealDate} - {entry.lastMealType}</td>
-                                    <td>{entry.campName}</td>
-                                    <td>{entry.accommodation}</td>
-                                    <td>₹{calculateCost(entry.firstMealDate, entry.firstMealType, entry.lastMealDate, entry.lastMealType, entry.accommodation)}</td>
-                                    <td>
-                                        <button onClick={() => editEntry(index)}>Edit</button>
-                                        <button onClick={() => deleteEntry(index)}>Delete</button>
-                                    </td>
+                    <div style={styles.tableContainer}>
+                        <table style={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th style={styles.th}>Full Name</th>
+                                    <th style={styles.th}>Gender</th>
+                                    <th style={styles.th}>Counselor Name</th>
+                                    <th style={styles.th}>First Meal</th>
+                                    <th style={styles.th}>Last Meal</th>
+                                    <th style={styles.th}>Camp Name</th>
+                                    <th style={styles.th}>Accommodation</th>
+                                    <th style={styles.th}>Cost</th>
+                                    <th style={styles.th}>Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {entries.map((entry, index) => (
+                                    <tr key={index}>
+                                        <td style={styles.td}>{entry.participantName}</td>
+                                        <td style={styles.td}>{entry.gender}</td>
+                                        <td style={styles.td}>{entry.counselorName}</td>
+                                        <td style={styles.td}>
+                                            {entry.firstMealDate} - {entry.firstMealType}
+                                        </td>
+                                        <td style={styles.td}>
+                                            {entry.lastMealDate} - {entry.lastMealType}
+                                        </td>
+                                        <td style={styles.td}>{entry.campName}</td>
+                                        <td style={styles.td}>{entry.accommodation}</td>
+                                        <td style={styles.td}>
+                                            ₹{calculateCost(entry.firstMealDate, entry.firstMealType, entry.lastMealDate, entry.lastMealType, entry.accommodation)}
+                                        </td>
+                                        <td style={styles.td}>
+                                            <div style={styles.actionButtonsContainer}>
+                                                <button style={styles.actionButton} onClick={() => editEntry(index)}>Edit</button>
+                                                <button style={styles.actionButton} onClick={() => deleteEntry(index)}>Delete</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                     <h3>Total Cost: ₹{calculateTotalCost()}</h3>
 
                     <button
+                        style={styles.button}
                         onClick={handlePayment}
                         disabled={isSubmitting || entries.length === 0}
                     >
                         {isSubmitting ? 'Processing...' : 'Proceed to Payment'}
                     </button>
-
                 </div>
             )}
 
@@ -324,25 +429,124 @@ export default function BulkRegistration() {
                     isSubmitting={isSubmitting}
                 />
             )}
-            <style jsx>{`
-                .status-message {
-                    padding: 10px;
-                    margin: 10px 0;
-                    border-radius: 4px;
-                }
-                .info {
-                    background-color: #e0f7fa;
-                    color: #006064;
-                }
-                .success {
-                    background-color: #e8f5e9;
-                    color: #1b5e20;
-                }
-                .error {
-                    background-color: #ffebee;
-                    color: #b71c1c;
-                }
-            `}</style>
         </div>
     );
 }
+
+
+const styles = {
+    container: {
+        maxWidth: "800px",
+        margin: "0 auto",
+        padding: "20px",
+        fontFamily: "'Arial', sans-serif",
+    },
+    header: {
+        textAlign: "center",
+        fontSize: "24px",
+        marginBottom: "20px",
+    },
+    buttonContainer: {
+        textAlign: "center",
+        marginBottom: "20px",
+    },
+    button: {
+        backgroundColor: "#007bff",
+        color: "#fff",
+        padding: "10px 20px",
+        border: "none",
+        cursor: "pointer",
+        borderRadius: "5px",
+        fontSize: "16px",
+    },
+    infoText: {
+        textAlign: "center",
+        fontSize: "16px",
+        marginBottom: "20px",
+    },
+    statusMessage: {
+        backgroundColor: "#e8f5e9",
+        color: "#388e3c",
+        padding: "10px",
+        borderRadius: "5px",
+        marginBottom: "20px",
+    },
+    pocForm: {
+        marginBottom: "20px",
+        padding: "15px",
+        backgroundColor: "#f4f4f4",
+        borderRadius: "5px",
+    },
+    pocDetails: {
+        marginBottom: "20px",
+        fontSize: "16px",
+        padding: "10px",
+        backgroundColor: "#f9f9f9",
+        borderRadius: "5px",
+    },
+    registrationForm: {
+        marginBottom: "20px",
+        padding: "20px",
+        backgroundColor: "#fafafa",
+        borderRadius: "5px",
+    },
+    input: {
+        width: "100%",
+        padding: "10px",
+        marginBottom: "10px",
+        borderRadius: "5px",
+        border: "1px solid #ccc",
+        fontSize: "16px",
+    },
+    select: {
+        width: "100%",
+        padding: "10px",
+        marginBottom: "10px",
+        borderRadius: "5px",
+        border: "1px solid #ccc",
+        fontSize: "16px",
+    },
+    entriesList: {
+        marginBottom: "20px",
+    },
+    table: {
+        width: "100%",
+        borderCollapse: "collapse",
+        marginBottom: "20px",
+        border: "2px solid #ddd", // Thicker table borders
+    },
+    th: {
+        padding: "12px",
+        backgroundColor: "#f2f2f2",
+        textAlign: "left",
+        fontWeight: "bold",
+        border: "2px solid #ddd", // Thicker borders for headers
+    },
+    td: {
+        padding: "10px",
+        border: "2px solid #ddd", // Thicker borders for data cells
+        textAlign: "center",
+    },
+    actionButton: {
+        backgroundColor: "#f44336",
+        color: "#fff",
+        padding: "5px 10px",
+        border: "none",
+        cursor: "pointer",
+        borderRadius: "5px",
+        fontSize: "12px", // Smaller button size
+    },
+    actionButtonsContainer: {
+        display: "flex",
+        justifyContent: "space-between", // Space between buttons
+        gap: "10px", // Adds spacing between buttons
+    },
+    tableContainer: {
+        overflowX: "auto", // Make table scrollable on mobile
+        marginBottom: "20px",
+    },
+    mobileTableContainer: {
+        display: "block", // For mobile
+        overflowX: "auto",
+    },
+};
