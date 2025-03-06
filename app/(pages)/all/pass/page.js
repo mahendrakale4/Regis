@@ -34,7 +34,7 @@ export default function AllPasswords() {
 
     return (
         <div>
-            <h2>REGISTRATION TABLE</h2>
+            <h2>USER TABLE</h2>
 
             {registrations.length === 0 ? (
                 <p>No registrations found.</p>
