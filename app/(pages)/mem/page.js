@@ -27,6 +27,7 @@ export default function BulkRegistration() {
         lastMealType: "",
         dinnerType: "",
         accommodation: "",
+        gender: "",
     });
     const [editIndex, setEditIndex] = useState(null);
     const [pocEntered, setPocEntered] = useState(false);
@@ -63,7 +64,7 @@ export default function BulkRegistration() {
     }
 
     function addEntry() {
-        if (!formData.voiceName || !formData.counselorName || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation) {
+        if (!formData.voiceName || !formData.counselorName || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation || !formData.gender) {
             alert("Please fill in required fields.");
             return;
         }
@@ -95,6 +96,7 @@ export default function BulkRegistration() {
             lastMealType: "",
             dinnerType: "Dinner Meal",
             accommodation: "",
+            gender: "",
         });
     }
 
@@ -180,6 +182,13 @@ export default function BulkRegistration() {
                     <label>Participant Name:</label>
                     <input type="text" name="participantName" value={formData.participantName} onChange={handleChange} /><br />
 
+                    <label>Gender:</label>
+                    <select name="gender" value={formData.gender} onChange={handleChange}>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select><br />
+
                     <label>Whatsapp:</label>
                     <input type="text" name="whatsapp" value={formData.whatsapp} onChange={handleChange} /><br />
 
@@ -192,29 +201,26 @@ export default function BulkRegistration() {
                     <label>Camp Name:</label>
                     <select name="campName" value={formData.campName} onChange={handleChange}>
                         <option value="">Select Camp</option>
-                        <option value="Nishtha">Nishtha (26 Dec-30 Dec)</option>
-                        <option value="Ashray">Ashray (26 Dec-30Dec)</option>
-                        <option value="GS Camp- First Time">GS Camp(23Dec-25Dec) - First Time</option>
-                        <option value="GS Camp- Attended Before">GS Camp(23 Dec-25 Dec) - Attended Before</option>
-                        <option value="GS Camp- Joining PDC 2024">GS Camp(23 Dec-25 Dec) - Joining PDC 2024</option>
-                        <option value="Mentor">Mentor</option>
-                        <option value="Volunteer">Volunteer</option>
+
+
+                        <option value="GS Camp- First Time">GS (18 - 20 april)</option>
+                        <option value="GS Camp- Attended Before">NS (18 - 20 april)</option>
+                        <option value="Volunteers">Brahmachari</option>
                         <option value="Brahmachari">Brahmachari</option>
                     </select><br />
 
                     <label>First Meal Date:</label>
                     <select name="firstMealDate" value={formData.firstMealDate} onChange={handleChange}>
                         <option value="">Select Date</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
                         <option value="21">21</option>
                         <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
                     </select>
 
                     <select name="firstMealType" value={formData.firstMealType} onChange={handleChange}>
@@ -227,16 +233,15 @@ export default function BulkRegistration() {
                     <label>Last Meal Date:</label>
                     <select name="lastMealDate" value={formData.lastMealDate} onChange={handleChange}>
                         <option value="">Select last Meal Date</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
                         <option value="22">22</option>
                         <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
-                        <option value="31">31</option>
                     </select>
 
                     <select name="lastMealType" value={formData.lastMealType} onChange={handleChange}>
@@ -255,9 +260,9 @@ export default function BulkRegistration() {
                     <label>Accommodation:</label>
                     <select name="accommodation" value={formData.accommodation} onChange={handleChange}>
                         <option value="">Select Accommodation</option>
-                        <option value="AC">AC</option>
-                        <option value="Non AC">Non AC</option>
-                        <option value="CV Floor">CV Floor</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        {/* <option value="CV Floor">CV Floor</option> */}
                     </select><br />
 
                     <button onClick={addEntry}>{editIndex !== null ? "Update Entry" : "Add Entry"}</button>
@@ -271,6 +276,7 @@ export default function BulkRegistration() {
                         <thead>
                             <tr>
                                 <th>Full Name</th>
+                                <th>Gender</th>
                                 <th>Counselor Name</th>
                                 <th>First Meal</th>
                                 <th>Last Meal</th>
@@ -284,6 +290,7 @@ export default function BulkRegistration() {
                             {entries.map((entry, index) => (
                                 <tr key={index}>
                                     <td>{entry.participantName}</td>
+                                    <td>{entry.gender}</td>
                                     <td>{entry.counselorName}</td>
                                     <td>{entry.firstMealDate} - {entry.firstMealType}</td>
                                     <td>{entry.lastMealDate} - {entry.lastMealType}</td>

@@ -15,6 +15,7 @@ model Registration {
   voiceName       String
   participantName String
   whatsapp        String
+  gender          String
   parentTemple    String
   counselorName   String
   campName        String

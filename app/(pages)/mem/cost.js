@@ -1,23 +1,22 @@
 
 const priceTable = [
+    { date: 14, breakfast: 40, lunch: 60, dinner: 30 },
+    { date: 15, breakfast: 40, lunch: 60, dinner: 30 },
+    { date: 16, breakfast: 40, lunch: 60, dinner: 30 },
+    { date: 17, breakfast: 40, lunch: 60, dinner: 30 },
+    { date: 18, breakfast: 40, lunch: 100, dinner: 30 },
+    { date: 19, breakfast: 40, lunch: 100, dinner: 30 },
+    { date: 20, breakfast: 40, lunch: 100, dinner: 30 },
     { date: 21, breakfast: 40, lunch: 60, dinner: 30 },
     { date: 22, breakfast: 40, lunch: 60, dinner: 30 },
     { date: 23, breakfast: 40, lunch: 60, dinner: 30 },
-    { date: 24, breakfast: 40, lunch: 100, dinner: 30 },
-    { date: 25, breakfast: 40, lunch: 90, dinner: 30 },
-    { date: 26, breakfast: 40, lunch: 90, dinner: 30 },
-    { date: 27, breakfast: 40, lunch: 100, dinner: 30 },
-    { date: 28, breakfast: 40, lunch: 100, dinner: 30 },
-    { date: 29, breakfast: 40, lunch: 100, dinner: 30 },
-    { date: 30, breakfast: 40, lunch: 60, dinner: 30 },
-    { date: 31, breakfast: 40, lunch: 60, dinner: 30 }
 ];
 
 // cost per day for different types of accommodation
 const accommodationPrices = {
-    "AC": 100,
-    "Non AC": 70,
-    "CV Floor": 50,
+    "Yes": 200,
+    "NO": 0,
+    // "CV Floor": 50,
 };
 
 
@@ -55,9 +54,9 @@ function calculateCost(firstMealDate, firstMealType, lastMealDate, lastMealType,
     if (accommodation && accommodationPrices[accommodation]) {
         const numberOfDays = lastDateInt - firstDateInt;  // Calculate the number of days
         totalCost += accommodationPrices[accommodation] * numberOfDays;  // Multiply by daily accommodation cost
-        // addiontal  Miscellaneous Charges: Rs 150
-        totalCost += 150;
+        // addiontal  Miscellaneous Charges: Rs 90
     }
+    totalCost += 90; // (10+20)x3 days 
     return totalCost;  // Move return here, outside the loop
 }
 

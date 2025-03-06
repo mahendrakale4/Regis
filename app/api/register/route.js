@@ -31,7 +31,7 @@ export async function POST(request) {
                     entry.accommodation
                 );
             } else {
-                amount =0; 
+                amount = 0;
             }
 
             // Create registration in database
@@ -41,6 +41,7 @@ export async function POST(request) {
                     pocContact: entry.pocContact || '',
                     voiceName: entry.voiceName || '',
                     participantName: entry.participantName || '',
+                    gender: entry.gender || '',
                     whatsapp: entry.whatsapp || '',
                     parentTemple: entry.parentTemple || '',
                     counselorName: entry.counselorName || '',
