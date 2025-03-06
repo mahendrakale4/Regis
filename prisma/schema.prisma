@@ -1,0 +1,41 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Or "mysql" or "sqlite" depending on your DB
+  url      = env("DATABASE_URL") // The connection string for your database
+}
+
+model Registration {
+  id              Int      @id @default(autoincrement())
+  pocName         String
+  pocContact      String
+  voiceName       String
+  participantName String
+  whatsapp        String
+  parentTemple    String
+  counselorName   String
+  campName        String
+  firstMealDate   Int
+  firstMealType   String
+  lastMealDate    Int
+  lastMealType    String
+  dinnerType      String
+  accommodation   String
+  amount          Float
+  emailId         String?
+  paymentMode     String?
+  transactionId   String?
+  createdAt       DateTime @default(now())
+  deductionSource String?
+  passcode        String?
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
