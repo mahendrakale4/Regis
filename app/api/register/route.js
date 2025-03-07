@@ -28,7 +28,8 @@ export async function POST(request) {
                     entry.firstMealType,
                     entry.lastMealDate,
                     entry.lastMealType,
-                    entry.accommodation
+                    entry.accommodation,
+                    entry.participantType
                 );
             } else {
                 amount = 0;
@@ -41,6 +42,7 @@ export async function POST(request) {
                     pocContact: entry.pocContact || '',
                     voiceName: entry.voiceName || '',
                     participantName: entry.participantName || '',
+                    participantType: entry.participantType || '',
                     gender: entry.gender || '',
                     whatsapp: entry.whatsapp || '',
                     parentTemple: entry.parentTemple || '',

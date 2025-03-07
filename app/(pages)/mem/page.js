@@ -27,6 +27,7 @@ export default function BulkRegistration() {
         dinnerType: "",
         accommodation: "",
         gender: "",
+        participantType: "",
     });
     const [editIndex, setEditIndex] = useState(null);
     const [pocEntered, setPocEntered] = useState(false);
@@ -62,7 +63,7 @@ export default function BulkRegistration() {
     }
 
     function addEntry() {
-        if (!formData.voiceName || !formData.counselorName || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation || !formData.gender) {
+        if (!formData.voiceName || !formData.counselorName || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation || !formData.gender || !formData.participantType) {
             alert("Please fill in required fields.");
             return;
         }
@@ -82,11 +83,11 @@ export default function BulkRegistration() {
         }
 
         setFormData({
-            voiceName: "",
+            voiceName: formData.voiceName,
+            parentTemple: formData.parentTemple,
+            counselorName: formData.counselorName,
             participantName: "",
             whatsapp: "",
-            parentTemple: "",
-            counselorName: "",
             campName: "",
             firstMealDate: "",
             firstMealType: "",
@@ -95,6 +96,7 @@ export default function BulkRegistration() {
             dinnerType: "Dinner Meal",
             accommodation: "",
             gender: "",
+            participantType: "",
         });
     }
 
@@ -111,7 +113,14 @@ export default function BulkRegistration() {
 
     const calculateTotalCost = () => {
         return entries.reduce((total, entry) => {
-            return total + calculateCost(entry.firstMealDate, entry.firstMealType, entry.lastMealDate, entry.lastMealType, entry.accommodation);
+            return total + calculateCost(
+                entry.firstMealDate,
+                entry.firstMealType,
+                entry.lastMealDate,
+                entry.lastMealType,
+                entry.accommodation,
+                entry.participantType
+            );
         }, 0);
     };
 
@@ -198,6 +207,15 @@ export default function BulkRegistration() {
 
             {pocEntered && (
                 <div style={styles.registrationForm}>
+                    <label>Parent Temple:</label>
+                    <input
+                        style={styles.input}
+                        type="text"
+                        name="parentTemple"
+                        value={formData.parentTemple}
+                        onChange={handleChange}
+                    />
+                    <br />
                     <label>Voice Name:</label>
                     <input
                         style={styles.input}
@@ -224,8 +242,25 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     >
                         <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                        <option value="Male-Bachelor">Male-Bachelor</option>
+                        <option value="Male - Married">Male - Married</option>
+                        <option value="Female- Bachelor">Female- Bachelor</option>
+                        <option value="Female - Married">Female - Married</option>
+                    </select>
+                    <br />
+                    <label>Participant Type:</label>
+                    <select
+                        style={styles.select}
+                        name="participantType"
+                        value={formData.participantType}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select Participant Type</option>
+                        <option value="Camp Participant">Camp Participant</option>
+                        <option value="Mentor">Mentor</option>
+                        <option value="Volunteer">Volunteer</option>
+                        <option value="Brahmachari">Brahmachari</option>
                     </select>
                     <br />
                     <label>Whatsapp:</label>
@@ -241,15 +276,7 @@ export default function BulkRegistration() {
                         onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
                     />
                     <br />
-                    <label>Parent Temple:</label>
-                    <input
-                        style={styles.input}
-                        type="text"
-                        name="parentTemple"
-                        value={formData.parentTemple}
-                        onChange={handleChange}
-                    />
-                    <br />
+
                     <label>Counselor Name:</label>
                     <input
                         style={styles.input}
@@ -267,10 +294,11 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     >
                         <option value="">Select Camp</option>
-                        <option value="GS Camp- First Time">GS (18 - 20 april)</option>
-                        <option value="GS Camp- Attended Before">NS (18 - 20 april)</option>
-                        <option value="Volunteers">Brahmachari</option>
-                        <option value="Brahmachari">Brahmachari</option>
+                        <option value="GS Camp - 1st Timer">GS Camp - 1st Timer</option>
+                        <option value="GS Camp - Attended Before">GS Camp - Attended Before</option>
+                        <option value="GS Camp - About to Join PDC">GS Camp - About to Join PDC</option>
+                        <option value="NS Camp - 1sTimer">NS Camp - 1sTimer</option>
+                        <option value="NS Camp -Attended Before">Brahmachari</option>
                     </select>
                     <br />
                     <label>First Meal Date:</label>
@@ -281,15 +309,15 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     >
                         <option value="">Select Date</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
+                        <option value="14">14 - April</option>
+                        <option value="15">15 - April</option>
+                        <option value="16">16 - April</option>
+                        <option value="17">17 - April</option>
+                        <option value="18">18 - April</option>
+                        <option value="19">19 - April</option>
+                        <option value="20">20 - April</option>
+                        <option value="21">21 - April</option>
+                        <option value="22">22 - April</option>
                     </select>
                     <br />
                     <select
@@ -312,15 +340,15 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     >
                         <option value="">Select Last Meal Date</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
+                        <option value="15">15 - April</option>
+                        <option value="16">16 - April</option>
+                        <option value="17">17 - April</option>
+                        <option value="18">18 - April</option>
+                        <option value="19">19 - April</option>
+                        <option value="20">20 - April</option>
+                        <option value="21">21 - April</option>
+                        <option value="22">22 - April</option>
+                        <option value="23">23 - April</option>
                     </select>
                     <br />
                     <select
@@ -354,11 +382,15 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     >
                         <option value="">Select Accommodation</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
+                        <option value="Yes">Yes , I need accomodation from CV</option>
+                        <option value="No">No , I dont need accomodation</option>
                     </select>
                     <br />
-                    <button style={styles.button} onClick={addEntry}>
+                    <button
+                        style={isSubmitting ? styles.disabledButton : styles.button}
+                        onClick={addEntry}
+                        disabled={isSubmitting}
+                    >
                         {editIndex !== null ? "Update Entry" : "Add Entry"}
                     </button>
                 </div>
@@ -386,7 +418,8 @@ export default function BulkRegistration() {
                                 {entries.map((entry, index) => (
                                     <tr key={index}>
                                         <td style={styles.td}>{entry.participantName}</td>
-                                        <td style={styles.td}>{entry.gender}</td>
+                                        <td style={{ ...styles.td, fontSize: '13px' }}>{entry.gender}</td>
+                                        {/* <td style={styles.td}>{entry.participantType}</td> */}
                                         <td style={styles.td}>{entry.counselorName}</td>
                                         <td style={styles.td}>
                                             {entry.firstMealDate} - {entry.firstMealType}
@@ -394,15 +427,34 @@ export default function BulkRegistration() {
                                         <td style={styles.td}>
                                             {entry.lastMealDate} - {entry.lastMealType}
                                         </td>
-                                        <td style={styles.td}>{entry.campName}</td>
+                                        <td style={{ ...styles.td, fontSize: '13px' }}>{entry.campName}</td>
                                         <td style={styles.td}>{entry.accommodation}</td>
                                         <td style={styles.td}>
-                                            ₹{calculateCost(entry.firstMealDate, entry.firstMealType, entry.lastMealDate, entry.lastMealType, entry.accommodation)}
+                                            ₹{calculateCost(
+                                                entry.firstMealDate,
+                                                entry.firstMealType,
+                                                entry.lastMealDate,
+                                                entry.lastMealType,
+                                                entry.accommodation,
+                                                entry.participantType
+                                            )}
                                         </td>
                                         <td style={styles.td}>
                                             <div style={styles.actionButtonsContainer}>
-                                                <button style={styles.actionButton} onClick={() => editEntry(index)}>Edit</button>
-                                                <button style={styles.actionButton} onClick={() => deleteEntry(index)}>Delete</button>
+                                                <button
+                                                    style={isSubmitting ? styles.disabledButton : styles.actionButton}
+                                                    onClick={() => editEntry(index)}
+                                                    disabled={isSubmitting}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    style={isSubmitting ? styles.disabledButton : styles.actionButton}
+                                                    onClick={() => deleteEntry(index)}
+                                                    disabled={isSubmitting}
+                                                >
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -413,7 +465,7 @@ export default function BulkRegistration() {
                     <h3>Total Cost: ₹{calculateTotalCost()}</h3>
 
                     <button
-                        style={styles.button}
+                        style={isSubmitting ? styles.disabledButton : styles.button}
                         onClick={handlePayment}
                         disabled={isSubmitting || entries.length === 0}
                     >
@@ -548,5 +600,14 @@ const styles = {
     mobileTableContainer: {
         display: "block", // For mobile
         overflowX: "auto",
+    },
+    disabledButton: {
+        backgroundColor: "#cccccc",
+        color: "#666666",
+        padding: "10px 20px",
+        border: "none",
+        borderRadius: "5px",
+        fontSize: "16px",
+        cursor: "not-allowed", // Changes cursor to indicate button is disabled
     },
 };

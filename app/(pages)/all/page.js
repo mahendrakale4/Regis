@@ -36,6 +36,7 @@ export default function AllRegistrations() {
             'POC Contact': reg.pocContact,
             'VOICE Name': reg.voiceName,
             'Participant Name': reg.participantName,
+            'Participant Type': reg.participantType,
             'Gender': reg.gender,
             'WhatsApp': reg.whatsapp,
             'Parent Temple': reg.parentTemple,
@@ -86,6 +87,7 @@ export default function AllRegistrations() {
                             <th>POC Contact</th>
                             <th>VOICE Name</th>
                             <th>Participant Name</th>
+                            <th>Participant Type</th>
                             <th>Gender</th>
                             <th>WhatsApp</th>
                             <th>Parent Temple</th>
@@ -110,6 +112,7 @@ export default function AllRegistrations() {
                                 <td>{reg.pocContact}</td>
                                 <td>{reg.voiceName}</td>
                                 <td>{reg.participantName}</td>
+                                <td>{reg.participantType}</td>
                                 <td>{reg.gender}</td>
                                 <td>{reg.whatsapp}</td>
                                 <td>{reg.parentTemple}</td>

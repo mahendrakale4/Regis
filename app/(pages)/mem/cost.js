@@ -1,4 +1,3 @@
-
 const priceTable = [
     { date: 14, breakfast: 40, lunch: 60, dinner: 30 },
     { date: 15, breakfast: 40, lunch: 60, dinner: 30 },
@@ -20,7 +19,12 @@ const accommodationPrices = {
 };
 
 
-function calculateCost(firstMealDate, firstMealType, lastMealDate, lastMealType, accommodation) {
+function calculateCost(firstMealDate, firstMealType, lastMealDate, lastMealType, accommodation, participantType) {
+    // If participant is Brahmachari, return 0
+    if (participantType === "Brahmachari") {
+        return 0;
+    }
+
     // Convert the dates to integers for easier comparison
     const firstDateInt = parseInt(firstMealDate.split('-')[0]);
     const lastDateInt = parseInt(lastMealDate.split('-')[0]);

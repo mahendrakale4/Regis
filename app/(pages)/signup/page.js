@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Cookies from 'js-cookie';
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -27,8 +28,8 @@ const SignupPage = () => {
       if (!response.ok) {
         throw new Error(data.error || "Failed to sign up");
       }
-
-      router.push("/mem");
+      Cookies.set('userEmail', email, { expires: 7 });
+      router.push("/dash");
     } catch (error) {
       setError(error.message);
     }
