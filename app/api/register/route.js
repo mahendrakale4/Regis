@@ -56,8 +56,10 @@ export async function POST(request) {
                     accommodation: entry.accommodation || '',
                     amount: amount,
                     emailId: emaildata ? emaildata : null,
-                    deductionSource: data.deductionSource || '',
-                    passcode: data.passcode || ''
+                    deductionSource: data.paymentMethod === 'IDT' ? data.deductionSource : '',
+                    passcode: data.paymentMethod === 'IDT' ? data.passcode : '',
+                    paymentId: data.paymentId || null,
+                    paymentStatus: data.paymentStatus || ''
                 }
             });
 

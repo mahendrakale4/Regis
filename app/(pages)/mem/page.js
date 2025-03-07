@@ -6,6 +6,8 @@ import { proceedToPayment } from './proceedToPayment.js';
 import { PaymentConfirmation } from './PaymentConfirmation';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { PaymentMethodSelection } from './PaymentMethodSelection';
+import { UPIPayment } from './UPIPayment';
 
 export default function BulkRegistration() {
     const [entries, setEntries] = useState([]);
@@ -35,6 +37,8 @@ export default function BulkRegistration() {
     const [submitStatus, setSubmitStatus] = useState(null);
     const [email, setUserEmail] = useState(null);
     const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false);
+    const [showPaymentMethodSelection, setShowPaymentMethodSelection] = useState(false);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [mounted, setMounted] = useState(false);
     const router = useRouter();
 
@@ -125,7 +129,37 @@ export default function BulkRegistration() {
     };
 
     const handlePayment = () => {
-        setShowPaymentConfirmation(true);
+        setShowPaymentMethodSelection(true);
+    };
+
+    const handlePaymentMethodSelect = (method) => {
+        setShowPaymentMethodSelection(false);
+        setSelectedPaymentMethod(method);
+        if (method === 'idt') {
+            setShowPaymentConfirmation(true);
+        }
+    };
+
+    const handleUPIPaymentConfirm = () => {
+        proceedToPayment(
+            entries,
+            email,
+            calculateTotalCost,
+            setIsSubmitting,
+            setSubmitStatus,
+            setPocEntered,
+            setEntries,
+            setPocDetails,
+            'UPI Payment',
+            'UPI'
+        );
+        setSelectedPaymentMethod(null);
+    };
+
+    const handlePaymentCancel = () => {
+        setShowPaymentMethodSelection(false);
+        setSelectedPaymentMethod(null);
+        setShowPaymentConfirmation(false);
     };
 
     const handlePaymentConfirm = ({ deductionSource, passcode }) => {
@@ -150,14 +184,14 @@ export default function BulkRegistration() {
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.header}>Registration Portal</h2>
+            <h3 style={styles.header}>Registration Portal</h3>
             <div style={styles.buttonContainer}>
                 <button style={styles.button} onClick={() => router.push('/dash')}>
                     View My Registrations
                 </button>
             </div>
-
             <p style={styles.infoText}>Hare Krsna ! You can add multiple registration entries in one transaction.</p>
+
 
             {submitStatus && (
                 <div style={styles.statusMessage}>
@@ -234,35 +268,39 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     />
                     <br />
-                    <label>Gender:</label>
-                    <select
-                        style={styles.select}
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                    >
-                        <option value="">Select Gender</option>
-                        <option value="Male-Bachelor">Male-Bachelor</option>
-                        <option value="Male - Married">Male - Married</option>
-                        <option value="Female- Bachelor">Female- Bachelor</option>
-                        <option value="Female - Married">Female - Married</option>
-                    </select>
-                    <br />
-                    <label>Participant Type:</label>
-                    <select
-                        style={styles.select}
-                        name="participantType"
-                        value={formData.participantType}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">Select Participant Type</option>
-                        <option value="Camp Participant">Camp Participant</option>
-                        <option value="Mentor">Mentor</option>
-                        <option value="Volunteer">Volunteer</option>
-                        <option value="Brahmachari">Brahmachari</option>
-                    </select>
-                    <br />
+                    <div style={styles.twoColumnContainer}>
+                        <div style={styles.column}>
+                            <label>Gender:</label>
+                            <select
+                                style={styles.select}
+                                name="gender"
+                                value={formData.gender}
+                                onChange={handleChange}
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male-Bachelor">Male-Bachelor</option>
+                                <option value="Male - Married">Male - Married</option>
+                                <option value="Female- Bachelor">Female- Bachelor</option>
+                                <option value="Female - Married">Female - Married</option>
+                            </select>
+                        </div>
+                        <div style={styles.column}>
+                            <label>Participant Type:</label>
+                            <select
+                                style={styles.select}
+                                name="participantType"
+                                value={formData.participantType}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select Participant Type</option>
+                                <option value="Camp Participant">Camp Participant</option>
+                                <option value="Mentor">Mentor</option>
+                                <option value="Volunteer">Volunteer</option>
+                                <option value="Brahmachari">Brahmachari</option>
+                            </select>
+                        </div>
+                    </div>
                     <label>Whatsapp:</label>
                     <input
                         style={styles.input}
@@ -301,68 +339,81 @@ export default function BulkRegistration() {
                         <option value="NS Camp -Attended Before">Brahmachari</option>
                     </select>
                     <br />
-                    <label>First Meal Date:</label>
-                    <select
-                        style={styles.select}
-                        name="firstMealDate"
-                        value={formData.firstMealDate}
-                        onChange={handleChange}
-                    >
-                        <option value="">Select Date</option>
-                        <option value="14">14 - April</option>
-                        <option value="15">15 - April</option>
-                        <option value="16">16 - April</option>
-                        <option value="17">17 - April</option>
-                        <option value="18">18 - April</option>
-                        <option value="19">19 - April</option>
-                        <option value="20">20 - April</option>
-                        <option value="21">21 - April</option>
-                        <option value="22">22 - April</option>
-                    </select>
-                    <br />
-                    <select
-                        style={styles.select}
-                        name="firstMealType"
-                        value={formData.firstMealType}
-                        onChange={handleChange}
-                    >
-                        <option value="">Choose Meal Type</option>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Dinner">Dinner</option>
-                    </select>
-                    <br />
-                    <label>Last Meal Date:</label>
-                    <select
-                        style={styles.select}
-                        name="lastMealDate"
-                        value={formData.lastMealDate}
-                        onChange={handleChange}
-                    >
-                        <option value="">Select Last Meal Date</option>
-                        <option value="15">15 - April</option>
-                        <option value="16">16 - April</option>
-                        <option value="17">17 - April</option>
-                        <option value="18">18 - April</option>
-                        <option value="19">19 - April</option>
-                        <option value="20">20 - April</option>
-                        <option value="21">21 - April</option>
-                        <option value="22">22 - April</option>
-                        <option value="23">23 - April</option>
-                    </select>
-                    <br />
-                    <select
-                        style={styles.select}
-                        name="lastMealType"
-                        value={formData.lastMealType}
-                        onChange={handleChange}
-                    >
-                        <option value="">Choose Meal Type</option>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Dinner">Dinner</option>
-                    </select>
-                    <br />
+                    <div style={styles.mealDateContainer}>
+                        <div style={styles.mealRow}>
+                            <div style={styles.mealColumn}>
+                                <label>First Meal Date:</label>
+                                <select
+                                    style={styles.select}
+                                    name="firstMealDate"
+                                    value={formData.firstMealDate}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select Date</option>
+                                    <option value="14">14 - April</option>
+                                    <option value="15">15 - April</option>
+                                    <option value="16">16 - April</option>
+                                    <option value="17">17 - April</option>
+                                    <option value="18">18 - April</option>
+                                    <option value="19">19 - April</option>
+                                    <option value="20">20 - April</option>
+                                    <option value="21">21 - April</option>
+                                    <option value="22">22 - April</option>
+                                </select>
+                            </div>
+                            <div style={styles.mealColumn}>
+                                <label>First Meal Type:</label>
+                                <select
+                                    style={styles.select}
+                                    name="firstMealType"
+                                    value={formData.firstMealType}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Choose Meal Type</option>
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style={styles.mealRow}>
+                            <div style={styles.mealColumn}>
+                                <label>Last Meal Date:</label>
+                                <select
+                                    style={styles.select}
+                                    name="lastMealDate"
+                                    value={formData.lastMealDate}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select Last Meal Date</option>
+                                    <option value="15">15 - April</option>
+                                    <option value="16">16 - April</option>
+                                    <option value="17">17 - April</option>
+                                    <option value="18">18 - April</option>
+                                    <option value="19">19 - April</option>
+                                    <option value="20">20 - April</option>
+                                    <option value="21">21 - April</option>
+                                    <option value="22">22 - April</option>
+                                    <option value="23">23 - April</option>
+                                </select>
+                            </div>
+                            <div style={styles.mealColumn}>
+                                <label>Last Meal Type:</label>
+                                <select
+                                    style={styles.select}
+                                    name="lastMealType"
+                                    value={formData.lastMealType}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Choose Meal Type</option>
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Dinner">Dinner</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <label>Dinner Type:</label>
                     <select
                         style={styles.select}
@@ -442,14 +493,22 @@ export default function BulkRegistration() {
                                         <td style={styles.td}>
                                             <div style={styles.actionButtonsContainer}>
                                                 <button
-                                                    style={isSubmitting ? styles.disabledButton : styles.actionButton}
+                                                    style={{
+                                                        ...styles.actionButton,
+                                                        ...styles.editButton,
+                                                        opacity: isSubmitting ? 0.7 : 1
+                                                    }}
                                                     onClick={() => editEntry(index)}
                                                     disabled={isSubmitting}
                                                 >
                                                     Edit
                                                 </button>
                                                 <button
-                                                    style={isSubmitting ? styles.disabledButton : styles.actionButton}
+                                                    style={{
+                                                        ...styles.actionButton,
+                                                        ...styles.deleteButton,
+                                                        opacity: isSubmitting ? 0.7 : 1
+                                                    }}
                                                     onClick={() => deleteEntry(index)}
                                                     disabled={isSubmitting}
                                                 >
@@ -474,10 +533,26 @@ export default function BulkRegistration() {
                 </div>
             )}
 
-            {mounted && showPaymentConfirmation && (
+            {mounted && showPaymentMethodSelection && (
+                <PaymentMethodSelection
+                    onSelectMethod={handlePaymentMethodSelect}
+                    onCancel={handlePaymentCancel}
+                />
+            )}
+
+            {mounted && selectedPaymentMethod === 'upi' && (
+                <UPIPayment
+                    amount={calculateTotalCost()}
+                    onConfirm={handleUPIPaymentConfirm}
+                    onCancel={handlePaymentCancel}
+                    isSubmitting={isSubmitting}
+                />
+            )}
+
+            {mounted && showPaymentConfirmation && selectedPaymentMethod === 'idt' && (
                 <PaymentConfirmation
                     onConfirm={handlePaymentConfirm}
-                    onCancel={() => setShowPaymentConfirmation(false)}
+                    onCancel={handlePaymentCancel}
                     isSubmitting={isSubmitting}
                 />
             )}
@@ -490,31 +565,41 @@ const styles = {
     container: {
         maxWidth: "800px",
         margin: "0 auto",
-        padding: "20px",
-        fontFamily: "'Arial', sans-serif",
+        padding: "16px",
+        fontFamily: "'Inter', sans-serif",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
     },
     header: {
         textAlign: "center",
-        fontSize: "24px",
-        marginBottom: "20px",
+        fontSize: "22px",
+        marginBottom: "16px",
+        color: "#333",
+        fontWeight: "600",
     },
     buttonContainer: {
         textAlign: "center",
         marginBottom: "20px",
     },
     button: {
-        backgroundColor: "#007bff",
+        backgroundColor: "#0070f3",
         color: "#fff",
-        padding: "10px 20px",
+        padding: "8px 16px",
         border: "none",
         cursor: "pointer",
-        borderRadius: "5px",
-        fontSize: "16px",
+        borderRadius: "6px",
+        fontSize: "14px",
+        fontWeight: "500",
     },
     infoText: {
         textAlign: "center",
-        fontSize: "16px",
-        marginBottom: "20px",
+        fontSize: "14px",
+        marginBottom: "16px",
+        color: "#666",
+        padding: "12px",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "6px",
     },
     statusMessage: {
         backgroundColor: "#e8f5e9",
@@ -524,90 +609,143 @@ const styles = {
         marginBottom: "20px",
     },
     pocForm: {
-        marginBottom: "20px",
-        padding: "15px",
-        backgroundColor: "#f4f4f4",
-        borderRadius: "5px",
-    },
-    pocDetails: {
-        marginBottom: "20px",
-        fontSize: "16px",
-        padding: "10px",
-        backgroundColor: "#f9f9f9",
-        borderRadius: "5px",
-    },
-    registrationForm: {
-        marginBottom: "20px",
-        padding: "20px",
-        backgroundColor: "#fafafa",
-        borderRadius: "5px",
+        marginBottom: "16px",
+        padding: "16px",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        border: "1px solid #e0e0e0",
     },
     input: {
-        width: "100%",
-        padding: "10px",
-        marginBottom: "10px",
-        borderRadius: "5px",
-        border: "1px solid #ccc",
-        fontSize: "16px",
+        width: "calc(100% - 16px)", // Adjust width to account for padding
+        padding: "8px",
+        marginBottom: "12px",
+        borderRadius: "4px",
+        border: "1px solid #ddd",
+        fontSize: "14px",
+        boxSizing: "border-box", // Ensure padding doesn't affect width
     },
     select: {
         width: "100%",
-        padding: "10px",
-        marginBottom: "10px",
-        borderRadius: "5px",
-        border: "1px solid #ccc",
-        fontSize: "16px",
+        padding: "8px",
+        marginBottom: "4px",
+        borderRadius: "4px",
+        border: "1px solid #ddd",
+        fontSize: "14px",
+        backgroundColor: "#ffffff",
+        boxSizing: "border-box",
     },
-    entriesList: {
-        marginBottom: "20px",
+    registrationForm: {
+        marginBottom: "16px",
+        padding: "16px",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        border: "1px solid #e0e0e0",
     },
     table: {
         width: "100%",
         borderCollapse: "collapse",
-        marginBottom: "20px",
-        border: "2px solid #ddd", // Thicker table borders
+        marginBottom: "16px",
+        border: "1px solid #e0e0e0",
     },
     th: {
-        padding: "12px",
-        backgroundColor: "#f2f2f2",
+        padding: "10px",
+        backgroundColor: "#f5f5f5",
         textAlign: "left",
-        fontWeight: "bold",
-        border: "2px solid #ddd", // Thicker borders for headers
+        fontWeight: "600",
+        fontSize: "13px",
+        color: "#444",
+        borderBottom: "1px solid #e0e0e0",
     },
     td: {
         padding: "10px",
-        border: "2px solid #ddd", // Thicker borders for data cells
-        textAlign: "center",
+        borderBottom: "1px solid #e0e0e0",
+        fontSize: "13px",
+        color: "#333",
     },
     actionButton: {
-        backgroundColor: "#f44336",
-        color: "#fff",
-        padding: "5px 10px",
+        padding: "6px 12px",
         border: "none",
         cursor: "pointer",
-        borderRadius: "5px",
-        fontSize: "12px", // Smaller button size
+        borderRadius: "4px",
+        fontSize: "12px",
+        fontWeight: "500",
+        backgroundColor: "#f0f0f0", // Light grey background
+        color: "#666", // Darker grey text
+        border: "1px solid #ddd",
+    },
+    editButton: {
+        backgroundColor: "#e8e8e8",
+        color: "#444",
+        "&:hover": {
+            backgroundColor: "#ddd",
+        }
+    },
+    deleteButton: {
+        backgroundColor: "#e8e8e8",
+        color: "#444",
+        "&:hover": {
+            backgroundColor: "#ddd",
+        }
     },
     actionButtonsContainer: {
         display: "flex",
-        justifyContent: "space-between", // Space between buttons
-        gap: "10px", // Adds spacing between buttons
+        gap: "6px",
+    },
+    label: {
+        display: "block",
+        marginBottom: "6px",
+        fontSize: "13px",
+        fontWeight: "500",
+        color: "#555",
     },
     tableContainer: {
-        overflowX: "auto", // Make table scrollable on mobile
-        marginBottom: "20px",
-    },
-    mobileTableContainer: {
-        display: "block", // For mobile
         overflowX: "auto",
+        marginBottom: "16px",
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
     },
     disabledButton: {
-        backgroundColor: "#cccccc",
-        color: "#666666",
-        padding: "10px 20px",
-        border: "none",
-        borderRadius: "5px",
-        fontSize: "16px",
-        cursor: "not-allowed", // Changes cursor to indicate button is disabled
+        backgroundColor: "#f0f0f0",
+        color: "#999",
+        cursor: "not-allowed",
+        opacity: 0.7,
+    },
+    pocDetails: {
+        fontSize: "14px",
+        padding: "0px 0px 0px 12px",
+        backgroundColor: "#f8f8f8",
+        borderRadius: "4px",
+        border: "1px solid #e0e0e0",
+        marginBottom: "8px",
+        display: "flex",
+        gap: "12px",
+    },
+    entriesList: {
+        marginBottom: "16px",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        padding: "16px",
+        border: "1px solid #e0e0e0",
+    },
+    mealDateContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+        marginBottom: "12px",
+    },
+    mealRow: {
+        display: "flex",
+        gap: "8px",
+    },
+    mealColumn: {
+        flex: 1,
+    },
+    twoColumnContainer: {
+        display: "flex",
+        gap: "8px",
+        marginBottom: "12px",
+    },
+    column: {
+        flex: 1,
     },
 };
