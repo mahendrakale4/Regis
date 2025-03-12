@@ -7,7 +7,9 @@ import { PaymentConfirmation } from './PaymentConfirmation';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { PaymentMethodSelection } from './PaymentMethodSelection';
-import { UPIPayment } from './UPIPayment';
+import { RazorpayPayment } from "./RazorpayPayment";
+
+
 
 export default function BulkRegistration() {
     const [entries, setEntries] = useState([]);
@@ -65,8 +67,15 @@ export default function BulkRegistration() {
     }
 
     function handlePocChange(e) {
-        const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
-        setPocDetails({ ...pocDetails, [e.target.name]: value });
+        const { name, value } = e.target;
+        if (name === 'pocContact') {
+            // Only allow digits for the contact number
+            const numericValue = value.replace(/[^0-9]/g, '').slice(0, 10);
+            setPocDetails({ ...pocDetails, [name]: numericValue });
+        } else {
+            // Allow any text for the name
+            setPocDetails({ ...pocDetails, [name]: value });
+        }
     }
 
     function savePocDetails() {
@@ -173,21 +182,6 @@ export default function BulkRegistration() {
         }
     };
 
-    const handleUPIPaymentConfirm = () => {
-        proceedToPayment(
-            entries,
-            email,
-            calculateTotalCost,
-            setIsSubmitting,
-            setSubmitStatus,
-            setPocEntered,
-            setEntries,
-            setPocDetails,
-            'UPI Payment',
-            'UPI'
-        );
-        setSelectedPaymentMethod(null);
-    };
 
     const handlePaymentCancel = () => {
         setShowPaymentMethodSelection(false);
@@ -195,20 +189,59 @@ export default function BulkRegistration() {
         setShowPaymentConfirmation(false);
     };
 
-    const handlePaymentConfirm = ({ deductionSource, passcode }) => {
-        proceedToPayment(
-            entries,
-            email,
-            calculateTotalCost,
-            setIsSubmitting,
-            setSubmitStatus,
-            setPocEntered,
-            setEntries,
-            setPocDetails,
-            deductionSource,
-            passcode
-        );
-        setShowPaymentConfirmation(false);
+    const handlePaymentConfirm = async (paymentDetails) => {
+        setIsSubmitting(true);
+        try {
+            console.log('Sending verification request with:', {
+                ...paymentDetails,
+                entries,
+                email,
+                amount: calculateTotalCost()
+            });
+
+            const response = await fetch('/api/verify-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...paymentDetails,
+                    entries,
+                    email,
+                    amount: calculateTotalCost()
+                }),
+            });
+
+            const data = await response.json();
+            console.log('Verification response:', data);
+
+            if (response.ok) {
+                setSubmitStatus({
+                    type: 'success',
+                    message: 'Registration successful! Thank you for your payment.',
+                    icon: '✅'
+                });
+                // Clear form
+                setEntries([]);
+                setPocEntered(false);
+                setPocDetails({
+                    pocName: "",
+                    pocContact: "",
+                });
+            } else {
+                throw new Error(data.error || 'Payment verification failed');
+            }
+        } catch (error) {
+            console.error('Payment verification error:', error);
+            setSubmitStatus({
+                type: 'error',
+                message: `Payment verification failed: ${error.message}`,
+                icon: '❌'
+            });
+        } finally {
+            setIsSubmitting(false);
+            setSelectedPaymentMethod(null);
+        }
     };
 
     // Add this function to get status message styles
@@ -533,7 +566,6 @@ export default function BulkRegistration() {
                                     <th style={styles.th}>Full Name</th>
                                     <th style={styles.th}>Gender</th>
                                     <th style={styles.th}>Age</th>
-                                    <th style={styles.th}>Marriage Year</th>
                                     <th style={styles.th}>Counselor Name</th>
                                     <th style={styles.th}>First Meal</th>
                                     <th style={styles.th}>Last Meal</th>
@@ -549,11 +581,7 @@ export default function BulkRegistration() {
                                         <td style={styles.td}>{entry.participantName}</td>
                                         <td style={{ ...styles.td, fontSize: '13px' }}>{entry.gender}</td>
                                         <td style={styles.td}>{entry.age}</td>
-                                        <td style={styles.td}>
-                                            {entry.campName === "NS Camp - Attended Before"
-                                                ? entry.marriedSinceYear
-                                                : "-"}
-                                        </td>
+
                                         <td style={styles.td}>{entry.counselorName}</td>
                                         <td style={styles.td}>
                                             {entry.firstMealDate} - {entry.firstMealType}
@@ -624,9 +652,55 @@ export default function BulkRegistration() {
             )}
 
             {mounted && selectedPaymentMethod === 'upi' && (
-                <UPIPayment
+                <RazorpayPayment
                     amount={calculateTotalCost()}
-                    onConfirm={handleUPIPaymentConfirm}
+                    onConfirm={async (paymentDetails) => {
+                        setIsSubmitting(true);
+                        try {
+                            const response = await fetch('/api/verify-payment', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    ...paymentDetails,
+                                    entries,
+                                    email,
+                                    amount: calculateTotalCost(),
+                                }),
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                setSubmitStatus({
+                                    type: 'success',
+                                    message: 'Payment successful! Your registration is complete.',
+                                    icon: '✅'
+                                });
+                                setEntries([]);
+                                setPocEntered(false);
+                                setPocDetails({
+                                    pocName: "",
+                                    pocContact: "",
+                                });
+                                // Optionally redirect to dashboard
+                                router.push('/dash');
+                            } else {
+                                throw new Error(data.error || 'Payment verification failed');
+                            }
+                        } catch (error) {
+                            console.error('Payment verification error:', error);
+                            setSubmitStatus({
+                                type: 'error',
+                                message: 'Payment verification failed. Please contact support.',
+                                icon: '❌'
+                            });
+                        } finally {
+                            setIsSubmitting(false);
+                            setSelectedPaymentMethod(null);
+                        }
+                    }}
                     onCancel={handlePaymentCancel}
                     isSubmitting={isSubmitting}
                 />
@@ -637,6 +711,9 @@ export default function BulkRegistration() {
                     onConfirm={handlePaymentConfirm}
                     onCancel={handlePaymentCancel}
                     isSubmitting={isSubmitting}
+                    entries={entries}
+                    email={email}
+                    amount={calculateTotalCost()}
                 />
             )}
         </div>
@@ -831,5 +908,23 @@ const styles = {
     },
     column: {
         flex: 1,
+    },
+    '@media screen and (maxWidth: 768px)': {
+        // styles for tablets
+        container: {
+            padding: '12px',
+        },
+        table: {
+            fontSize: '12px',
+        },
+    },
+    '@media screen and (maxWidth: 480px)': {
+        // styles for mobile
+        container: {
+            padding: '8px',
+        },
+        table: {
+            fontSize: '11px',
+        },
     },
 };

@@ -60,7 +60,6 @@ export async function POST(request) {
                     deductionSource: data.paymentMethod === 'IDT' ? data.deductionSource : '',
                     passcode: data.paymentMethod === 'IDT' ? data.passcode : '',
                     paymentId: data.paymentId || null,
-                    paymentStatus: data.paymentStatus || ''
                 }
             });
 

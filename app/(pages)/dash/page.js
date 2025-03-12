@@ -44,13 +44,13 @@ export default function Dashboard() {
 
     return (
         <div style={styles.container}>
-            <div className="news-ticker">
+            {/* <div className="news-ticker">
                 <div className="ticker-wrapper">
                     <div className="ticker-content">
                         <p>📢 Note: Payment status will show as 'pending' until verified • All payments are verified within 1 week • Payment status will show as 'pending' until verified • All payments are verified within 1 week</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <h1 style={styles.header}>My Registrations</h1>
             <p style={styles.email}>Email: {userEmail}</p>
@@ -79,14 +79,12 @@ export default function Dashboard() {
                         <thead>
                             <tr>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Date</th>
-                                <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>POC Name</th>
+
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Participant Name</th>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Camp Name</th>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Accommodation</th>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '14px', textAlign: 'center' }}>Amount</th>
-                                {/* <th style={styles.tableHeader}>Payment Method</th> */}
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Payment Method</th>
-                                <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Payment Status</th>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Payment ID</th>
                                 <th style={{ padding: '12px', backgroundColor: '#0070f3', color: '#fff', fontSize: '13px', textAlign: 'center' }}>Meal Details</th>
                             </tr>
@@ -95,20 +93,13 @@ export default function Dashboard() {
                             {registrations.map((reg) => (
                                 <tr key={reg.id} style={styles.tableRow} className="table-row">
                                     <td style={styles.tableCell}>{formatDate(reg.createdAt)}</td>
-                                    <td style={styles.tableCell}>{reg.pocName}</td>
+
                                     <td style={styles.tableCell}>{reg.participantName}</td>
-                                    <td style={{ padding: '12px', borderBottom: '1px solid #ddd', fontSize: '13px', textAlign: 'center' }}>{reg.campName}</td>
-                                    <td style={{ padding: '12px', borderBottom: '1px solid #ddd', fontSize: '16px', textAlign: 'center' }}>{reg.accommodation}</td>
-                                    <td style={styles.tableCell}>₹{reg.amount}</td>
+                                    <td style={styles.td}>{reg.campName}</td>
+                                    <td style={styles.td}>{reg.accommodation}</td>
+                                    <td style={styles.td}>₹{reg.amount}</td>
                                     <td style={styles.tableCell}>
-                                        {reg.deductionSource ? 'IDT' : reg.paymentId ? 'UPI' : ''}
-                                    </td>
-                                    <td style={styles.tableCell}>
-                                        {reg.paymentStatus && (
-                                            <span className={`status-badge ${reg.paymentStatus === 'pending' ? 'verifying' : reg.paymentStatus.toLowerCase()}`}>
-                                                {reg.paymentStatus === 'pending' ? 'Verifying Payment' : reg.paymentStatus}
-                                            </span>
-                                        )}
+                                        {reg.paymentId ? 'Razorpay' : reg.deductionSource ? 'IDT' : ''}
                                     </td>
                                     <td style={styles.tableCell}>
                                         {reg.paymentId || ''}
@@ -578,6 +569,19 @@ const styles = {
         },
         '@media (max-width: 480px)': {
             fontSize: '10px',
+        }
+    },
+    td: {
+        padding: '12px',
+        textAlign: 'center',
+        borderBottom: '1px solid #ddd',
+        '@media (max-width: 768px)': {
+            padding: '8px',
+            minWidth: '100px',
+        },
+        '@media (max-width: 480px)': {
+            padding: '6px',
+            minWidth: '80px',
         }
     }
 };

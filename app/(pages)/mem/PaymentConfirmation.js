@@ -4,12 +4,12 @@ import { useState } from 'react';
 
 const VALID_PASSCODES = ['11', '22', '33', '44', '55'];
 
-export function PaymentConfirmation({ onConfirm, onCancel, isSubmitting }) {
+export function PaymentConfirmation({ onConfirm, onCancel, isSubmitting, entries, email, amount }) {
     const [deductionSource, setDeductionSource] = useState('');
     const [passcode, setPasscode] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!deductionSource.trim()) {
             setError('VOICE Name /Dept from where to deduct Laxmi');
@@ -19,7 +19,14 @@ export function PaymentConfirmation({ onConfirm, onCancel, isSubmitting }) {
             setError('Invalid passcode');
             return;
         }
-        onConfirm({ deductionSource, passcode });
+        onConfirm({
+            entries,
+            email,
+            amount,
+            paymentMethod: 'IDT',  // Specify IDT payment method
+            deductionSource: deductionSource,
+            passcode: passcode
+        });
     };
 
     return (

@@ -10,17 +10,12 @@ datasource db {
 
 model Registration {
   id               Int      @id @default(autoincrement())
-  pocName          String
-  pocContact       String
-  voiceName        String
+  emailId          String
+  voiceName        String?
   participantName  String
-  participantType  String?
-  whatsapp         String
-  gender           String
-  age              Int?
-  marriedSinceYear Int?
-  parentTemple     String
-  counselorName    String
+  whatsapp         String?
+  parentTemple     String?
+  counselorName    String?
   campName         String
   firstMealDate    Int
   firstMealType    String
@@ -28,13 +23,17 @@ model Registration {
   lastMealType     String
   dinnerType       String
   accommodation    String
-  amount           Float
-  emailId          String?
-  createdAt        DateTime @default(now())
+  gender           String
+  participantType  String?
+  age              Int?
+  marriedSinceYear Int?
+  pocName          String
+  pocContact       String
+  paymentId        String?
   deductionSource  String?
   passcode         String?
-  paymentId        String?
-  paymentStatus    String?
+  createdAt        DateTime @default(now())
+  amount           Float
 }
 
 model User {
@@ -44,12 +43,4 @@ model User {
   createdAt DateTime @default(now())
 }
 
-model UserRegistration {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String
-  phone     String
-  event     String
-  createdAt DateTime @default(now())
-  // Add other fields as needed
-}
+
