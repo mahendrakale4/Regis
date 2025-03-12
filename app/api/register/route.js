@@ -2,9 +2,8 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import calculateCost from "../../(pages)/mem/cost"
+import prisma from '../../../lib/prisma';
 
-// Initialize Prisma client
-const prisma = new PrismaClient();
 
 export async function POST(request) {
     try {

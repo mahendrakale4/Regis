@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // Or "mysql" or "sqlite" depending on your DB
-  url      = env("DATABASE_URL") // The connection string for your database
+  provider = "postgresql" // or your database provider
+  url      = env("DATABASE_URL")
 }
 
 model Registration {
