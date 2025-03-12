@@ -30,6 +30,8 @@ export default function BulkRegistration() {
         accommodation: "",
         gender: "",
         participantType: "",
+        age: "",
+        marriedSinceYear: "",
     });
     const [editIndex, setEditIndex] = useState(null);
     const [pocEntered, setPocEntered] = useState(false);
@@ -51,28 +53,45 @@ export default function BulkRegistration() {
     }, []);
 
     function handleChange(e) {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'campName' && e.target.value !== "NS Camp - Attended Before") {
+            setFormData({
+                ...formData,
+                [e.target.name]: e.target.value,
+                marriedSinceYear: "" // Clear marriedSinceYear if camp is not NS Camp - Attended Before
+            });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
     }
 
     function handlePocChange(e) {
-        setPocDetails({ ...pocDetails, [e.target.name]: e.target.value });
+        const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+        setPocDetails({ ...pocDetails, [e.target.name]: value });
     }
 
     function savePocDetails() {
-        if (!pocDetails.pocName || !pocDetails.pocContact) {
-            alert("Please enter POC Name and Contact.");
+        if (!pocDetails.pocName || !pocDetails.pocContact || pocDetails.pocContact.length !== 10) {
+            alert("Please enter POC Name and a valid 10-digit Contact number.");
             return;
         }
         setPocEntered(true);
     }
 
     function addEntry() {
-        if (!formData.voiceName || !formData.counselorName || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation || !formData.gender || !formData.participantType) {
+        if (!formData.voiceName || !formData.age || !formData.campName || !formData.firstMealDate || !formData.firstMealType || !formData.lastMealDate || !formData.lastMealType || !formData.accommodation || !formData.gender || !formData.participantType) {
             alert("Please fill in required fields.");
+            return;
+        }
+        if (formData.campName === "NS Camp - Attended Before" && !formData.marriedSinceYear) {
+            alert("Please enter Marriage Year - it is required for NS Camp - Attended Before");
             return;
         }
         if (formData.firstMealDate >= formData.lastMealDate) {
             alert("First meal date should be before last meal date.");
+            return;
+        }
+        if (formData.whatsapp && formData.whatsapp.length !== 10) {
+            alert("WhatsApp number must be exactly 10 digits.");
             return;
         }
         const newEntry = { ...formData, ...pocDetails, email: email };
@@ -82,8 +101,16 @@ export default function BulkRegistration() {
             updatedEntries[editIndex] = newEntry;
             setEntries(updatedEntries);
             setEditIndex(null);
+            setSubmitStatus({
+                type: 'success',
+                message: 'Entry updated successfully! You can add more entries or scroll down to check your entries.',
+            });
         } else {
             setEntries([...entries, newEntry]);
+            setSubmitStatus({
+                type: 'success',
+                message: 'Entry added successfully! You can add more entries or scroll down to check your entries.',
+            });
         }
 
         setFormData({
@@ -101,7 +128,13 @@ export default function BulkRegistration() {
             accommodation: "",
             gender: "",
             participantType: "",
+            age: "",
+            marriedSinceYear: "",
         });
+
+        setTimeout(() => {
+            setSubmitStatus(null);
+        }, 5000);
     }
 
     function editEntry(index) {
@@ -178,6 +211,20 @@ export default function BulkRegistration() {
         setShowPaymentConfirmation(false);
     };
 
+    // Add this function to get status message styles
+    const getStatusMessageStyles = (status) => ({
+        padding: "10px",
+        borderRadius: "5px",
+        marginBottom: "20px",
+        textAlign: "center",
+        backgroundColor: status?.type === 'success' ? "#e8f5e9" :
+            status?.type === 'error' ? "#ffebee" :
+                status?.type === 'info' ? "#e3f2fd" : "#e8f5e9",
+        color: status?.type === 'success' ? "#2e7d32" :
+            status?.type === 'error' ? "#c62828" :
+                status?.type === 'info' ? "#1565c0" : "#2e7d32",
+    });
+
     if (!mounted) {
         return null;
     }
@@ -194,7 +241,7 @@ export default function BulkRegistration() {
 
 
             {submitStatus && (
-                <div style={styles.statusMessage}>
+                <div style={getStatusMessageStyles(submitStatus)}>
                     {submitStatus.message}
                 </div>
             )}
@@ -213,19 +260,15 @@ export default function BulkRegistration() {
                     <label>POC Contact no:</label>
                     <input
                         style={styles.input}
-                        type="number"
+                        type="tel"
                         name="pocContact"
                         value={pocDetails.pocContact}
                         onChange={handlePocChange}
-                        maxLength={10}  // Limit input to 10 characters
-                        pattern="\d{10}"  // Ensure exactly 10 digits are entered
-                        inputMode="numeric"  // Mobile numeric keypad
-                        onInput={(e) => {
-                            // Restrict to only numbers, and limit to 10 characters
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
-                        }}
+                        minLength={10}
+                        maxLength={10}
+                        pattern="[0-9]{10}"
                         placeholder="Enter 10-digit number"
-
+                        required
                     />
                     <br />
                     <button style={styles.button} onClick={savePocDetails}>
@@ -272,18 +315,62 @@ export default function BulkRegistration() {
                         <div style={styles.column}>
                             <label>Gender:</label>
                             <select
-                                style={styles.select}
+                                style={styles.input}
                                 name="gender"
                                 value={formData.gender}
                                 onChange={handleChange}
                             >
                                 <option value="">Select Gender</option>
-                                <option value="Male-Bachelor">Male-Bachelor</option>
-                                <option value="Male - Married">Male - Married</option>
-                                <option value="Female- Bachelor">Female- Bachelor</option>
-                                <option value="Female - Married">Female - Married</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
                             </select>
                         </div>
+                        <div style={styles.column}>
+                            <label>Age:</label>
+                            <input
+                                style={styles.input}
+                                type="number"
+                                name="age"
+                                value={formData.age}
+                                onChange={handleChange}
+                                min="0"
+                                max="150"
+                            />
+                        </div>
+                    </div>
+                    <label>Camp Name:</label>
+                    <select
+                        style={styles.select}
+                        name="campName"
+                        value={formData.campName}
+                        onChange={handleChange}
+                    >
+                        <option value="">Select Camp</option>
+                        <option value="GS Camp - 1st Timer">GS Camp - 1st Timer</option>
+                        <option value="GS Camp - Attended Before">GS Camp - Attended Before</option>
+                        <option value="GS Camp - About to Join PDC">GS Camp - About to Join PDC</option>
+                        <option value="NS Camp - 1sTimer">NS Camp - 1sTimer</option>
+                        <option value="NS Camp - Attended Before">NS Camp - Attended Before</option>
+                        <option value="NS Camp -Attended Before">Brahmachari</option>
+                    </select>
+                    <br />
+                    <div style={styles.twoColumnContainer}>
+                        {formData.campName === "NS Camp - Attended Before" && (
+                            <div style={styles.column}>
+                                <label>Married Since (Year):</label>
+                                <input
+                                    style={styles.input}
+                                    type="number"
+                                    name="marriedSinceYear"
+                                    value={formData.marriedSinceYear}
+                                    onChange={handleChange}
+                                    min="1900"
+                                    max={new Date().getFullYear()}
+                                    placeholder="Enter year of marriage"
+                                    required
+                                />
+                            </div>
+                        )}
                         <div style={styles.column}>
                             <label>Participant Type:</label>
                             <select
@@ -304,14 +391,17 @@ export default function BulkRegistration() {
                     <label>Whatsapp:</label>
                     <input
                         style={styles.input}
-                        type="text"
+                        type="tel"
                         name="whatsapp"
                         value={formData.whatsapp}
-                        onChange={handleChange}
-                        maxLength={10}  // Limit input to 10 characters
-                        pattern="\d{10}"  // Regex pattern to ensure only numbers are entered
-                        inputMode="numeric"  // Triggers numeric keypad on mobile devices
-                        onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                            handleChange({ target: { name: 'whatsapp', value } });
+                        }}
+                        minLength={10}
+                        maxLength={10}
+                        pattern="[0-9]{10}"
+                        placeholder="Enter 10-digit WhatsApp number"
                     />
                     <br />
 
@@ -324,21 +414,7 @@ export default function BulkRegistration() {
                         onChange={handleChange}
                     />
                     <br />
-                    <label>Camp Name:</label>
-                    <select
-                        style={styles.select}
-                        name="campName"
-                        value={formData.campName}
-                        onChange={handleChange}
-                    >
-                        <option value="">Select Camp</option>
-                        <option value="GS Camp - 1st Timer">GS Camp - 1st Timer</option>
-                        <option value="GS Camp - Attended Before">GS Camp - Attended Before</option>
-                        <option value="GS Camp - About to Join PDC">GS Camp - About to Join PDC</option>
-                        <option value="NS Camp - 1sTimer">NS Camp - 1sTimer</option>
-                        <option value="NS Camp -Attended Before">Brahmachari</option>
-                    </select>
-                    <br />
+
                     <div style={styles.mealDateContainer}>
                         <div style={styles.mealRow}>
                             <div style={styles.mealColumn}>
@@ -456,6 +532,8 @@ export default function BulkRegistration() {
                                 <tr>
                                     <th style={styles.th}>Full Name</th>
                                     <th style={styles.th}>Gender</th>
+                                    <th style={styles.th}>Age</th>
+                                    <th style={styles.th}>Marriage Year</th>
                                     <th style={styles.th}>Counselor Name</th>
                                     <th style={styles.th}>First Meal</th>
                                     <th style={styles.th}>Last Meal</th>
@@ -470,7 +548,12 @@ export default function BulkRegistration() {
                                     <tr key={index}>
                                         <td style={styles.td}>{entry.participantName}</td>
                                         <td style={{ ...styles.td, fontSize: '13px' }}>{entry.gender}</td>
-                                        {/* <td style={styles.td}>{entry.participantType}</td> */}
+                                        <td style={styles.td}>{entry.age}</td>
+                                        <td style={styles.td}>
+                                            {entry.campName === "NS Camp - Attended Before"
+                                                ? entry.marriedSinceYear
+                                                : "-"}
+                                        </td>
                                         <td style={styles.td}>{entry.counselorName}</td>
                                         <td style={styles.td}>
                                             {entry.firstMealDate} - {entry.firstMealType}
@@ -602,11 +685,12 @@ const styles = {
         borderRadius: "6px",
     },
     statusMessage: {
-        backgroundColor: "#e8f5e9",
-        color: "#388e3c",
         padding: "10px",
         borderRadius: "5px",
         marginBottom: "20px",
+        textAlign: "center",
+        backgroundColor: "#e8f5e9",  // default success background
+        color: "#2e7d32",  // default success text color
     },
     pocForm: {
         marginBottom: "16px",

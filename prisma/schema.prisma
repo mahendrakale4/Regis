@@ -9,30 +9,32 @@ datasource db {
 }
 
 model Registration {
-  id              Int      @id @default(autoincrement())
-  pocName         String
-  pocContact      String
-  voiceName       String
-  participantName String
-  participantType String?
-  whatsapp        String
-  gender          String
-  parentTemple    String
-  counselorName   String
-  campName        String
-  firstMealDate   Int
-  firstMealType   String
-  lastMealDate    Int
-  lastMealType    String
-  dinnerType      String
-  accommodation   String
-  amount          Float
-  emailId         String?
-  createdAt       DateTime @default(now())
-  deductionSource String?
-  passcode        String?
-  paymentId       String?
-  paymentStatus   String? 
+  id               Int      @id @default(autoincrement())
+  pocName          String
+  pocContact       String
+  voiceName        String
+  participantName  String
+  participantType  String?
+  whatsapp         String
+  gender           String
+  age              Int?
+  marriedSinceYear Int?
+  parentTemple     String
+  counselorName    String
+  campName         String
+  firstMealDate    Int
+  firstMealType    String
+  lastMealDate     Int
+  lastMealType     String
+  dinnerType       String
+  accommodation    String
+  amount           Float
+  emailId          String?
+  createdAt        DateTime @default(now())
+  deductionSource  String?
+  passcode         String?
+  paymentId        String?
+  paymentStatus    String?
 }
 
 model User {
@@ -40,4 +42,14 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+}
+
+model UserRegistration {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  event     String
+  createdAt DateTime @default(now())
+  // Add other fields as needed
 }

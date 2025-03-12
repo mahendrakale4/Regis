@@ -32,7 +32,7 @@ export function PaymentMethodSelection({ onSelectMethod, onCancel }) {
                         <span style={styles.idtIcon}>📝</span>
                         <div style={styles.methodInfo}>
                             <span style={styles.methodName}>IDT Payment</span>
-                            <span style={styles.methodDesc}>Internal deduction transfer</span>
+                            <span style={styles.methodDesc}>ISKCON Inter Department Transfer</span>
                         </div>
                     </button>
                 </div>

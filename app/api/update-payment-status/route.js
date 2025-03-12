@@ -38,7 +38,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error updating payment status:', error);
         return NextResponse.json(
-            { error: 'Failed to update payment status' },   
+            { error: 'Failed to update payment status' },
             { status: 500 }
         );
     }

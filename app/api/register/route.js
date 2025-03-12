@@ -54,6 +54,8 @@ export async function POST(request) {
                     lastMealType: entry.lastMealType || '',
                     dinnerType: entry.dinnerType || 'Dinner Meal',
                     accommodation: entry.accommodation || '',
+                    age: parseInt(entry.age) || null,
+                    marriedSinceYear: parseInt(entry.marriedSinceYear) || null,
                     amount: amount,
                     emailId: emaildata ? emaildata : null,
                     deductionSource: data.paymentMethod === 'IDT' ? data.deductionSource : '',
