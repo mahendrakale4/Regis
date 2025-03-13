@@ -192,9 +192,21 @@ export default function BulkRegistration() {
     const handlePaymentConfirm = async (paymentDetails) => {
         setIsSubmitting(true);
         try {
+            // Add validation for IDT payment
+            if (paymentDetails.paymentMethod === 'IDT' && (!paymentDetails.deductionSource || !paymentDetails.passcode)) {
+                throw new Error('Please provide both deduction source and passcode for IDT payment');
+            }
+
+            // Update entries with passcode for IDT payments
+            const updatedEntries = entries.map(entry => ({
+                ...entry,
+                deductionSource: paymentDetails.deductionSource,
+                passcode: paymentDetails.passcode
+            }));
+
             console.log('Sending verification request with:', {
                 ...paymentDetails,
-                entries,
+                entries: updatedEntries, // Use updated entries with passcode
                 email,
                 amount: calculateTotalCost()
             });
@@ -206,7 +218,7 @@ export default function BulkRegistration() {
                 },
                 body: JSON.stringify({
                     ...paymentDetails,
-                    entries,
+                    entries: updatedEntries,
                     email,
                     amount: calculateTotalCost()
                 }),
@@ -228,6 +240,8 @@ export default function BulkRegistration() {
                     pocName: "",
                     pocContact: "",
                 });
+                // Redirect to dashboard after successful payment
+                router.push('/dash');
             } else {
                 throw new Error(data.error || 'Payment verification failed');
             }
@@ -241,10 +255,10 @@ export default function BulkRegistration() {
         } finally {
             setIsSubmitting(false);
             setSelectedPaymentMethod(null);
+            setShowPaymentConfirmation(false);
         }
     };
 
-    // Add this function to get status message styles
     const getStatusMessageStyles = (status) => ({
         padding: "10px",
         borderRadius: "5px",

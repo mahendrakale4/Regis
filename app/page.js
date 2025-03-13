@@ -61,6 +61,12 @@ export default function HomePage() {
               <Link href="/events/pricing-policy" style={styles.footerLink}>
                 Pricing Policy
               </Link>
+              <Link href="/events/contact-us" style={styles.footerLink}>
+                Contact Us
+              </Link>
+              <Link href="/events/about-us" style={styles.footerLink}>
+                About Us
+              </Link>
             </div>
           </div>
         </div>

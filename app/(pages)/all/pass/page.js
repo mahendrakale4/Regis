@@ -45,7 +45,7 @@ export default function AllPasswords() {
                             <th>ID</th>
                             <th>Email</th>
                             <th>Created At</th>
-                            <th>Actions</th>
+                            <th>Password</th>
                         </tr>
                     </thead>
                     <tbody>
